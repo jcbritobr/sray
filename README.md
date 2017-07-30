@@ -1,5 +1,5 @@
 # SRay
-SRay is a simple raytracing application based on [Raytracing in One Weekend](https://www.amazon.com/Ray-Tracing-Weekend-Minibooks-Book-ebook/dp/B01B5AODD8) book.
+SRay is a simple raytracing application based on [Ray Tracing in One Weekend](https://www.amazon.com/Ray-Tracing-Weekend-Minibooks-Book-ebook/dp/B01B5AODD8) book.
 
 ![Image processed with 100 samples](images/goodsample-2.png)
 
