@@ -2,32 +2,6 @@
 #include "dielectric.hpp"
 #include "ray.hpp"
 
-Vector3 Dielectric::reflect(const Vector3 &v, const Vector3 &n)
-{
-    return v - (n * Vector3::dot(v, n) * 2);
-}
-
-bool Dielectric::refract(const Vector3 &v, const Vector3 &n, float niOverNt, Vector3 &refracted)
-{
-    Vector3 uv = Vector3::makeUnitVector(v);
-    //Vector3 un = Vector3::makeUnitVector(n);
-    float dt = Vector3::dot(uv, n);
-    float discriminant = 1.0 - niOverNt * niOverNt * (1.0 - dt * dt);
-    if (discriminant > 0) {
-        refracted = ((uv - n * dt) * niOverNt) - (n * sqrt(discriminant));
-        return true;
-    } else {
-        return false;
-    }
-}
-
-float Dielectric::schilick(float cosine, float ref)
-{
-    float r0 = (1.0 - ref) / (1.0 + ref);
-    r0 = r0 * r0;
-    return r0 + (1.0 - r0)*pow((1.0 - cosine), 5.0);
-}
-
 Dielectric::Dielectric(float ri): refIdx(ri)
 {}
 
@@ -35,11 +9,11 @@ bool Dielectric::scatter(const Ray &ray, const HitRecord &record, Vector3 &atten
 {
     Vector3 outwardNormal;
     Vector3 reflected = reflect(ray.getDirection(), record.normal);
-    float niOverNt;
+    float niOverNt = 0.0f;
     attenuation = Vector3(1.0, 1.0, 1.0);
     Vector3 refracted;
-    float reflectProb;
-    float cosine;
+    float reflectProb = 0.0f;
+    float cosine = 0.0f;
 
     if (Vector3::dot(ray.getDirection(), record.normal) > 0) {
         outwardNormal = -record.normal;

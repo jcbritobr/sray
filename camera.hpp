@@ -15,6 +15,8 @@ private:
     float lensRadius;
     Vector3 u, v, w;
 
+    Vector3 randonInUnitDisk();
+
 public:
     Camera();
     Camera(Vector3 from, Vector3 to, Vector3 vup, float vfov, float aspect, float aperture, float focusDist);
