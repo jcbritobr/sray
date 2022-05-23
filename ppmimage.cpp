@@ -3,15 +3,17 @@
 //TODO:: write tests -- this code compiles :-)
 
 constexpr auto P3MARKER = "P3";
-constexpr auto P3MAGIC = 255;
+constexpr auto PPMNL = '\n';
+constexpr auto PPMSPACE = ' ';
+constexpr auto PPMMAGIC = 255;
 
 std::ostream &operator <<(std::ostream &stream, const PPMImage &image)
 {
-    stream << "P3\n" << image.width << " " << image.height << "\n255\n";
+    stream << P3MARKER << PPMNL << image.width << PPMSPACE << image.height << PPMNL << PPMMAGIC << PPMNL;
     if( !stream ) return stream;
 
     for ( const auto& color: image.data ) {
-        stream << color.r() << " " << color.g() << " " << color.b() << std::endl;
+        stream << color.r() << PPMSPACE << color.g() << PPMSPACE << color.b() << PPMNL;
         if( !stream ) return stream;
     }
 
@@ -31,7 +33,7 @@ std::istream &operator >>(std::istream &stream, PPMImage &image)
     size_t width, height, magic;
     stream >> width >> height >> magic;
     if( !stream ) return stream;
-    if( magic != P3MAGIC ) {
+    if( magic != PPMMAGIC ) {
         stream.setstate(std::ios_base::failbit);
         return stream;
     }
