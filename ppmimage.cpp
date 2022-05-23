@@ -1,34 +1,18 @@
-#include <iostream>
 #include "ppmimage.hpp"
 
-int PPMImage::getHeigth() const
-{
-    return heigth;
-}
+//TODO:: write tests -- this code compiles :-)
 
-int PPMImage::getWidth() const
-{
-    return width;
-}
-
-std::vector<Color> PPMImage::getData() const
-{
-    return data;
-}
-
-PPMImage::PPMImage(int width, int heigth):width(width), heigth(heigth)
-{
-    for (int i = 0; i < width * heigth; ++i) {
-        data.push_back(Color(0.0f, 0.0f, 0.0f));
-    }
-}
+constexpr auto P3MARKER = "P3";
+constexpr auto P3MAGIC = 255;
 
 std::ostream &operator <<(std::ostream &stream, const PPMImage &image)
 {
-    stream << "P3\n" << image.getWidth() << " " << image.getHeigth() << "\n255\n";
+    stream << "P3\n" << image.width << " " << image.height << "\n255\n";
+    if( !stream ) return stream;
 
-    for (auto color: image.getData()) {
+    for ( const auto& color: image.data ) {
         stream << color.r() << " " << color.g() << " " << color.b() << std::endl;
+        if( !stream ) return stream;
     }
 
     return stream;
@@ -36,5 +20,32 @@ std::ostream &operator <<(std::ostream &stream, const PPMImage &image)
 
 std::istream &operator >>(std::istream &stream, PPMImage &image)
 {
+    if( !stream ) return stream;
+    std::string p3;
+    stream >> p3;
+    if( !stream ) return stream;
+    if( p3 != P3MARKER ) {
+        stream.setstate(std::ios_base::failbit);
+        return stream;
+    }
+    size_t width, height, magic;
+    stream >> width >> height >> magic;
+    if( !stream ) return stream;
+    if( magic != P3MAGIC ) {
+        stream.setstate(std::ios_base::failbit);
+        return stream;
+    }
+    std::vector<Color> data;
+    data.reserve(width*height); // avoid reallocations and copies
 
+    for( auto count = width*height; count --> 0; ) {
+        float r, g, b;
+        stream >> r >> g >> b;
+        if( !stream ) return stream;
+        data.emplace_back(r, g, b);
+    }
+
+    image = PPMImage { width, height, data };
+
+    return stream;
 }
